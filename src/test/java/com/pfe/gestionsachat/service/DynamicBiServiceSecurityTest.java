@@ -68,7 +68,7 @@ public class DynamicBiServiceSecurityTest {
             dynamicBiService.executeDynamicBiQuery(maliciousSql, 1);
         });
 
-        assertTrue(exception.getMessage().contains("doit obligatoirement être un SELECT racine"));
+        assertTrue(exception.getMessage().contains("Verbe DML détecté"));
         verify(entityManager, never()).createNativeQuery(anyString(), any(Class.class));
     }
 
@@ -82,7 +82,7 @@ public class DynamicBiServiceSecurityTest {
             dynamicBiService.executeDynamicBiQuery(maliciousSql, 1);
         });
 
-        assertTrue(exception.getMessage().contains("doit obligatoirement être un SELECT racine"));
+        assertTrue(exception.getMessage().contains("doit être un SELECT ou un CTE"));
         verify(entityManager, never()).createNativeQuery(anyString(), any(Class.class));
     }
 
@@ -90,8 +90,23 @@ public class DynamicBiServiceSecurityTest {
     void executeDynamicBiQuery_StackedQueries_ShouldThrowSecurityException() {
         when(userRepository.findById(1)).thenReturn(Optional.of(mockAdminUser));
         
+        // DROP est intercepté dès la règle DML, avant la règle des requêtes empilées
         String maliciousSql = "SELECT * FROM budget_pieces; DROP TABLE users";
         
+        SecurityException exception = assertThrows(SecurityException.class, () -> {
+            dynamicBiService.executeDynamicBiQuery(maliciousSql, 1);
+        });
+
+        assertTrue(exception.getMessage().contains("Verbe DML détecté"));
+        verify(entityManager, never()).createNativeQuery(anyString(), any(Class.class));
+    }
+
+    @Test
+    void executeDynamicBiQuery_StackedSelects_ShouldThrowSecurityException() {
+        when(userRepository.findById(1)).thenReturn(Optional.of(mockAdminUser));
+
+        String maliciousSql = "SELECT * FROM budget_pieces; SELECT * FROM users";
+
         SecurityException exception = assertThrows(SecurityException.class, () -> {
             dynamicBiService.executeDynamicBiQuery(maliciousSql, 1);
         });
