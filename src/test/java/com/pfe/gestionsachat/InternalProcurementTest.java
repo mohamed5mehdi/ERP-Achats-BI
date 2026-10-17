@@ -33,8 +33,6 @@ public class InternalProcurementTest {
                 .filter(sf -> sf.getFamily().getIdFamily().equals(family.getIdFamily()))
                 .findFirst().orElseThrow();
         Supplier supplier = supplierRepository.findAll().get(0);
-        User acheteur = userRepository.findAll().stream()
-                .filter(u -> u.getRole() == Role.ACHETEUR).findFirst().orElseThrow();
 
         // 2. Création SAV
         DemandeAchatInterne da = new DemandeAchatInterne();
@@ -49,12 +47,11 @@ public class InternalProcurementTest {
         DemandeAchatInterne soumise = demandeService.soumettre(saved.getId(), demandeur);
         assertEquals(StatutDemande.EN_TRAITEMENT, soumise.getStatut());
 
-        // 3. Traitement Acheteur (Valorisation + Traiter)
-        demandeService.valoriserDemande(soumise.getId(), BigDecimal.valueOf(500), supplier.getOidSupplier());
-        DemandeAchatInterne traitee = demandeService.traiterAchat(soumise.getId(), acheteur);
-        
+        // 3. Valorisation Acheteur : une pièce SAV est auto-confirmée dès la valorisation
+        DemandeAchatInterne valorisee = demandeService.valoriserDemande(soumise.getId(), BigDecimal.valueOf(500), supplier.getOidSupplier());
+
         // VERIFICATION CRITIQUE : Statut APPROUVEE directement (Bypass N1/DG)
-        assertEquals(StatutDemande.APPROUVEE, traitee.getStatut());
+        assertEquals(StatutDemande.APPROUVEE, valorisee.getStatut());
     }
 
     @Test
