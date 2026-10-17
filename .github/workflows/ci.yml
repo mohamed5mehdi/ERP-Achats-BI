@@ -1,29 +1,63 @@
-name: Procurement Management CI/CD Pipeline
+name: CI
 
 on:
   push:
-    branches: [ "main", "master", "develop" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master", "develop" ]
+    branches: [ "main" ]
 
 jobs:
   test-and-build:
     name: Build & Run Tests
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: antigravity_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_DB_USERNAME: postgres
+      TEST_DB_PASSWORD: postgres
+      # Base de test vide : le schéma est généré par Hibernate pour chaque exécution
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Set up JDK 21
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: '21'
         distribution: 'temurin'
         cache: 'maven'
 
     - name: Run Tests & Build
-      run: mvn clean verify -Dspring.profiles.active=test
+      run: mvn -B clean verify -Dspring.profiles.active=test
+
+    - name: Test summary
+      if: always()
+      run: |
+        shopt -s nullglob
+        files=(target/surefire-reports/*.txt)
+        if [ ${#files[@]} -eq 0 ]; then echo "::warning::No surefire reports produced"; exit 0; fi
+        for f in "${files[@]}"; do
+          line=$(grep -m1 "Tests run:" "$f" || true)
+          name=$(basename "$f" .txt)
+          echo "$name — $line" >> "$GITHUB_STEP_SUMMARY"
+          if echo "$line" | grep -Eq "(Failures|Errors): [1-9]"; then echo "::error title=$name::$line"; fi
+        done
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
