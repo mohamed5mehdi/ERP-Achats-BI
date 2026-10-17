@@ -58,6 +58,12 @@ jobs:
           echo "$name — $line" >> "$GITHUB_STEP_SUMMARY"
           if echo "$line" | grep -Eq "(Failures|Errors): [1-9]"; then echo "::error title=$name::$line"; fi
         done
+        # Détail de chaque test en échec : nom de la méthode + première ligne du message
+        for f in "${files[@]}"; do
+          grep -A1 -E "<<< (FAILURE|ERROR)!$" "$f" | grep -v "^--$" | paste - - | cut -c1-400 | while read -r l; do echo "::warning title=Test detail::$l"; done
+        done
+        total=$(cat "${files[@]}" | grep -m999 "Tests run:" | awk -F'[:,]' '{r+=$2; f+=$4; e+=$6} END {print "Total: " r " tests, " f " failures, " e " errors"}')
+        echo "::notice title=Totals::$total"
         # Remonte les causes racines distinctes des erreurs (visible dans les annotations du run)
         grep -h "Caused by:" target/surefire-reports/*.txt 2>/dev/null | sed 's/^[[:space:]]*//' | cut -c1-300 | sort | uniq -c | sort -rn | head -5 | while read -r line; do echo "::warning title=Root cause::$line"; done
 
