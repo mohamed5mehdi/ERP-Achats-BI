@@ -64,6 +64,10 @@ jobs:
         done
         total=$(cat "${files[@]}" | grep -m999 "Tests run:" | awk -F'[:,]' '{r+=$2; f+=$4; e+=$6} END {print "Total: " r " tests, " f " failures, " e " errors"}')
         echo "::notice title=Totals::$total"
+        # Exceptions applicatives loguées pendant les tests en échec (fichiers *-output.txt)
+        for o in target/surefire-reports/*-output.txt; do
+          grep -hE "^[a-zA-Z.]+(Exception|Error): " "$o" | cut -c1-300 | sort | uniq -c | sort -rn | head -3 | while read -r l; do echo "::warning title=Log $(basename "$o" -output.txt)::$l"; done
+        done
         # Remonte les causes racines distinctes des erreurs (visible dans les annotations du run)
         grep -h "Caused by:" target/surefire-reports/*.txt 2>/dev/null | sed 's/^[[:space:]]*//' | cut -c1-300 | sort | uniq -c | sort -rn | head -5 | while read -r line; do echo "::warning title=Root cause::$line"; done
 
