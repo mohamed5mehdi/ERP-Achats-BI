@@ -44,7 +44,7 @@ jobs:
         cache: 'maven'
 
     - name: Run Tests & Build
-      run: mvn -B clean verify -Dspring.profiles.active=test
+      run: mvn -B clean verify -Dspring.profiles.active=test -Dmaven.test.redirectTestOutputToFile=true
 
     - name: Test summary
       if: always()
