@@ -58,6 +58,8 @@ jobs:
           echo "$name — $line" >> "$GITHUB_STEP_SUMMARY"
           if echo "$line" | grep -Eq "(Failures|Errors): [1-9]"; then echo "::error title=$name::$line"; fi
         done
+        # Remonte les causes racines distinctes des erreurs (visible dans les annotations du run)
+        grep -h "Caused by:" target/surefire-reports/*.txt 2>/dev/null | sed 's/^[[:space:]]*//' | cut -c1-300 | sort | uniq -c | sort -rn | head -5 | while read -r line; do echo "::warning title=Root cause::$line"; done
 
     - name: Upload Test Reports
       uses: actions/upload-artifact@v4
