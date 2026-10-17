@@ -65,3 +65,12 @@ test_payload.json
 test_payload_budget.json
 payload.json
 payload_null.json
+
+### Fichiers locaux / artefacts ###
+.idea/
+${project.build.directory}/
+*.class
+*.bundle
+error_log.txt
+system_context_extraction*.md
+/*.json
