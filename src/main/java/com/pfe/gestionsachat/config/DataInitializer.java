@@ -61,26 +61,26 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.count() == 0) {
             log.info("👥 Création des utilisateurs système...");
             
-            User n1       = new User("Younesse Filali",    "n1@test.com",       encoder.encode("password"), Role.MANAGER_N1);
-            User tech     = new User("Halim Mansouri",     "tech@test.com",     encoder.encode("password"), Role.TECHNICIEN);
-            User acheteur = new User("Abdsamad Alami",     "acheteur@test.com", encoder.encode("password"), Role.ACHETEUR);
+            User n1       = new User("Manager N+1",    "n1@test.com",       encoder.encode("password"), Role.MANAGER_N1);
+            User tech     = new User("Technicien",     "tech@test.com",     encoder.encode("password"), Role.TECHNICIEN);
+            User acheteur = new User("Acheteur",     "acheteur@test.com", encoder.encode("password"), Role.ACHETEUR);
             User acheteurInfo = new User("Acheteur Info",  "acheteur.info@test.com", encoder.encode("password"), Role.ACHETEUR_INFORMATIQUE);
             User acheteurBureau = new User("Acheteur Bureau",  "acheteur.bureau@test.com", encoder.encode("password"), Role.ACHETEUR_BUREAUTIQUE);
             User acheteurMob = new User("Acheteur Mobilier",  "acheteur.mob@test.com", encoder.encode("password"), Role.ACHETEUR_MOBILIER);
             User acheteurCons = new User("Acheteur Consommable",  "acheteur.cons@test.com", encoder.encode("password"), Role.ACHETEUR_CONSOMMABLE);
             User acheteurAutre = new User("Acheteur Autre",  "acheteur.autre@test.com", encoder.encode("password"), Role.ACHETEUR_AUTRE);
-            User amg      = new User("Ilham Bennani",      "amg@test.com",      encoder.encode("password"), Role.AMG);
-            User daf      = new User("Ibtissame Saadalh",  "daf@test.com",      encoder.encode("password"), Role.DAF);
-            User dg       = new User("Abdelhamid Barakate", "dg@test.com",       encoder.encode("password"), Role.DG);
-            User admin    = new User("Zaid Ziani",         "admin@test.com",    encoder.encode("password"), Role.ADMINISTRATEUR);
+            User amg      = new User("Responsable AMG",      "amg@test.com",      encoder.encode("password"), Role.AMG);
+            User daf      = new User("Directeur Financier",  "daf@test.com",      encoder.encode("password"), Role.DAF);
+            User dg       = new User("Directeur Général", "dg@test.com",       encoder.encode("password"), Role.DG);
+            User admin    = new User("Administrateur",         "admin@test.com",    encoder.encode("password"), Role.ADMINISTRATEUR);
             
-            demandeur = new User("Mehdi Benjelloun", "demandeur@test.com", encoder.encode("password"), Role.EMPLOYE);
+            demandeur = new User("Demandeur", "demandeur@test.com", encoder.encode("password"), Role.EMPLOYE);
             demandeur.setService("LOGISTIQUE BAG");
             demandeur.setN1(n1);
             
-            User magasinier = new User("Hassan Rahhali",   "magasinier@test.com", encoder.encode("password"), Role.MAGASINIER);
-            User comptable   = new User("Nadia Berrada",    "comptable@test.com",  encoder.encode("password"), Role.COMPTABLE);
-            User respAchat   = new User("Omar Kettani",     "resp.achat@test.com", encoder.encode("password"), Role.RESP_ACHAT);
+            User magasinier = new User("Magasinier",   "magasinier@test.com", encoder.encode("password"), Role.MAGASINIER);
+            User comptable   = new User("Comptable",    "comptable@test.com",  encoder.encode("password"), Role.COMPTABLE);
+            User respAchat   = new User("Responsable Achat",     "resp.achat@test.com", encoder.encode("password"), Role.RESP_ACHAT);
 
             userRepository.saveAll(List.of(n1, tech, acheteur, acheteurInfo, acheteurBureau, acheteurMob, acheteurCons, acheteurAutre, amg, daf, dg, admin, demandeur, magasinier, comptable, respAchat));
         } else {
@@ -129,18 +129,18 @@ public class DataInitializer implements CommandLineRunner {
         log.info("📂 10 Sous-Familles créées.");
 
         // 4. Fournisseurs (Noms professionnels adaptés avec détails enrichis)
-        Supplier sup1 = new Supplier("Alpha IT Solutions", "Mehdi Tazi", "Casablanca Tech Park", "INFORMATIQUE", 5, 3);
+        Supplier sup1 = new Supplier("Alpha IT Solutions", "Contact Alpha IT", "Casablanca Tech Park", "INFORMATIQUE", 5, 3);
         sup1.setEmail("contact@alpha-it.ma");
         sup1.setPhone("0522-123456");
         sup1.setIsCertified(true);
         sup1.setIce("001524879654123");
 
-        Supplier sup2 = new Supplier("Global Office Systems", "Sami Alami", "Rabat Business Center", "MOBILIER", 4, 7);
+        Supplier sup2 = new Supplier("Global Office Systems", "Contact Global Office", "Rabat Business Center", "MOBILIER", 4, 7);
         sup2.setEmail("sales@global-office.ma");
         sup2.setPhone("0537-654321");
         sup2.setIce("002365478965412");
 
-        Supplier sup3 = new Supplier("Elite Services Group", "Fatima Zahra", "Tanger Med", "DIVERS", 3, 5);
+        Supplier sup3 = new Supplier("Elite Services Group", "Contact Elite Services", "Tanger Med", "DIVERS", 3, 5);
         sup3.setEmail("info@elite-services.ma");
         sup3.setIce("003147852369874");
         
@@ -460,17 +460,17 @@ public class DataInitializer implements CommandLineRunner {
             if (mag.getWarehouse() == null) {
                 mag.setWarehouse(central);
                 userRepository.save(mag);
-                log.info("🔗 Magasinier Hassan Rahhali assigné à '{}'", central.getName());
+                log.info("🔗 Magasinier central assigné à '{}'", central.getName());
             }
         });
 
         // 12. MAGASINIER_DEST — garanti d'avoir un warehouse
         if (userRepository.findByRole(Role.MAGASINIER_DEST).isEmpty()) {
-            User magDest = new User("Karim Alaoui", "magasinier.dest@test.com",
+            User magDest = new User("Magasinier Destination", "magasinier.dest@test.com",
                 encoder.encode("password"), Role.MAGASINIER_DEST);
             warehouseRepository.findByName("Magasin Marrakech BAG").ifPresent(magDest::setWarehouse);
             userRepository.save(magDest);
-            log.info("👷 MAGASINIER_DEST Karim Alaoui seedé pour warehouse 'Magasin Marrakech BAG'");
+            log.info("👷 MAGASINIER_DEST seedé pour warehouse 'Magasin Marrakech BAG'");
         }
 
         // 13. Nouveaux Magasiniers Spécifiques
@@ -506,6 +506,5 @@ public class DataInitializer implements CommandLineRunner {
         }
 
 
-        log.info("Encadrants : M. Abdelhamid Barakate & Mme Ibtissame Saadalh");
     }
 }

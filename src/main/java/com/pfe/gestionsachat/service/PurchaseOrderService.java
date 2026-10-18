@@ -121,7 +121,7 @@ public class PurchaseOrderService {
         // Règle Schéma 2 : Si c'est une pièce SAV (Bypass DG), le PO doit être approuvé par le Resp. Achat
         // Si c'est un flux standard, il est déjà validé par la DG.
         // Toutes les commandes générées à partir d'une DI (qu'elles soient SAV ou Standard)
-        // nécessitent l'approbation du Responsable Achat (Omar Kettani) pour acquérir le statut APPROVED.
+        // nécessitent l'approbation du Responsable Achat pour acquérir le statut APPROVED.
         po.setStatut(POStatus.PENDING_APPROVAL);
         
         po.setMontantTotal(montantTtc);
