@@ -15,7 +15,7 @@
 frontend/
 ├── src/
 │   ├── api/
-│   │   ├── axios.ts         # Instance Axios (proxy /api → localhost:8080)
+│   │   ├── axios.ts         # Instance Axios (proxy /api → localhost:8090)
 │   │   └── services.ts      # Tous les appels REST (DA, workflow, famille, etc.)
 │   ├── components/
 │   │   ├── DaModal.tsx      # Modal réutilisable avec détails DA + stepper
@@ -47,13 +47,13 @@ frontend/
 ├── package.json
 ├── tailwind.config.js
 ├── tsconfig.json
-└── vite.config.ts           # Proxy /api → http://localhost:8080
+└── vite.config.ts           # Proxy /api → http://localhost:8090
 ```
 
 ## Prérequis
 
 1. **Node.js 18+** — Télécharger sur https://nodejs.org/
-2. **Spring Boot** doit tourner sur le port 8080
+2. **Spring Boot** doit tourner sur le port 8090
 
 ## Démarrage
 
@@ -62,10 +62,10 @@ frontend/
 cd C:\Users\user\IdeaProjects\GestionsAchat\frontend
 
 npm install      # Installer les dépendances
-npm run dev      # Démarrer le serveur de dev (port 3000)
+npm run dev      # Démarrer le serveur de dev (port 3005)
 ```
 
-Ouvrir → http://localhost:3000
+Ouvrir → http://localhost:3005
 
 ## Comptes de test
 
@@ -81,5 +81,5 @@ Ouvrir → http://localhost:3000
 
 ## CORS Spring Boot
 
-Le proxy Vite transmet toutes les requêtes `/api/*` vers `http://localhost:8080`.
+Le proxy Vite transmet toutes les requêtes `/api/*` vers `http://localhost:8090`.
 En production, configurer `@CrossOrigin(origins = "http://votre-domaine.com")`.
