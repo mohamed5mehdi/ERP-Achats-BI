@@ -460,7 +460,7 @@ public class DataInitializer implements CommandLineRunner {
             if (mag.getWarehouse() == null) {
                 mag.setWarehouse(central);
                 userRepository.save(mag);
-                log.info("🔗 Magasinier Magasinier assigné à '{}'", central.getName());
+                log.info("🔗 Magasinier central assigné à '{}'", central.getName());
             }
         });
 
@@ -470,7 +470,7 @@ public class DataInitializer implements CommandLineRunner {
                 encoder.encode("password"), Role.MAGASINIER_DEST);
             warehouseRepository.findByName("Magasin Marrakech BAG").ifPresent(magDest::setWarehouse);
             userRepository.save(magDest);
-            log.info("👷 MAGASINIER_DEST Magasinier Destination seedé pour warehouse 'Magasin Marrakech BAG'");
+            log.info("👷 MAGASINIER_DEST seedé pour warehouse 'Magasin Marrakech BAG'");
         }
 
         // 13. Nouveaux Magasiniers Spécifiques
@@ -506,6 +506,5 @@ public class DataInitializer implements CommandLineRunner {
         }
 
 
-        log.info("Encadrants : M. Directeur Général & Mme Directeur Financier");
     }
 }

@@ -1,5 +1,5 @@
 ### 0. Variables globales
-@baseUrl = http://localhost:8080/api
+@baseUrl = http://localhost:8090/api
 
 ### 1. Authentification Demandeur
 # @name loginDemandeur
